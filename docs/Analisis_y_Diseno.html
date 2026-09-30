@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 2 - Analisis y diseno</title>
+<style>
+  @page { size: letter; margin: 1.7cm; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; color: #20242a; font-size: 10.5pt; line-height: 1.35; }
+  h1 { font-size: 20pt; text-align: center; margin-top: 2.3cm; }
+  h2 { font-size: 15pt; color: #183b5b; border-bottom: 1px solid #7890a5; padding-bottom: 4px; }
+  h3 { font-size: 12pt; color: #244f72; margin-bottom: 5px; }
+  p { margin: 5px 0 9px; }
+  ol, ul { margin-top: 4px; }
+  li { margin-bottom: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 7px 0 14px; font-size: 9pt; }
+  th, td { border: 1px solid #788896; padding: 5px; vertical-align: top; }
+  th { background: #dce8f1; text-align: left; }
+  code { font-family: Consolas, monospace; font-size: 9pt; }
+  .cover { page-break-after: always; text-align: center; }
+  .cover p { font-size: 12pt; margin: 18px; }
+  .page-break { page-break-before: always; }
+  .keep { break-inside: avoid; }
+  .uml-page { page-break-before: always; }
+  .note { background: #eef4f8; border-left: 4px solid #48779d; padding: 8px; }
+</style>
+</head>
+<body>
+<section class="cover">
+  <p>Universidad del Valle de Guatemala</p>
+  <p>CC2008 - Introduccion a la Programacion Orientada a Objetos<br>Semestre II, 2026</p>
+  <h1>Laboratorio 2<br>Agencia de detectives - Caso misterioso</h1>
+  <p><strong>Analisis y diseno</strong></p>
+  <p style="margin-top:3cm">Nombre: _______________________________<br><br>Carne: _______________________________</p>
+</section>
+
+<h2>1. Requisitos funcionales</h2>
+<ol>
+  <li>Solicitar al iniciar el nombre, codigo y detective responsable del caso.</li>
+  <li>Crear un caso nuevo que reemplace al actual y comience sin ubicaciones ni pistas.</li>
+  <li>Guardar como maximo cinco ubicaciones en un arreglo basico de objetos; los espacios libres contienen <code>null</code>.</li>
+  <li>Guardar para cada ubicacion codigo, nombre, direccion o descripcion, riesgo y estado.</li>
+  <li>Validar que el riesgo se encuentre entre 1 y 10; un valor invalido genera <code>IllegalArgumentException</code>.</li>
+  <li>Registrar una ubicacion en una posicion valida y libre del arreglo, con datos validos.</li>
+  <li>Consultar todas las ubicaciones sin mostrar los espacios <code>null</code>.</li>
+  <li>Consultar una ubicacion por posicion e informar si la posicion es invalida o esta vacia.</li>
+  <li>Modificar el riesgo y estado de una ubicacion existente.</li>
+  <li>Descartar una ubicacion asignando nuevamente <code>null</code> a su posicion.</li>
+  <li>Guardar una cantidad dinamica de pistas directamente en un <code>ArrayList&lt;Pista&gt;</code>.</li>
+  <li>Guardar para cada pista codigo, descripcion, tipo, importancia y confiabilidad.</li>
+  <li>Validar importancia entre 1 y 10 y confiabilidad entre 0 y 100; los valores invalidos generan <code>IllegalArgumentException</code>.</li>
+  <li>Registrar pistas sin permitir codigos repetidos.</li>
+  <li>Consultar todas las pistas e informar cuando la coleccion este vacia.</li>
+  <li>Buscar una pista por codigo recorriendo el <code>ArrayList</code>.</li>
+  <li>Modificar codigo, descripcion, tipo, importancia y confiabilidad de una pista existente, sin permitir que el nuevo codigo quede repetido.</li>
+  <li>Eliminar del <code>ArrayList</code> una pista localizada por codigo.</li>
+  <li>Reportar ubicaciones registradas, espacios disponibles y ubicacion de mayor riesgo.</li>
+  <li>Reportar cantidad de pistas, pista de mayor importancia, pista de mayor confiabilidad y promedio de importancia.</li>
+  <li>Evitar calculos que requieran elementos cuando el <code>ArrayList</code> este vacio.</li>
+  <li>Manejar entradas numericas incorrectas mediante <code>InputMismatchException</code>, limpiar la entrada y continuar.</li>
+  <li>Usar bloques <code>try-catch</code> y al menos un <code>finally</code> con una accion final pertinente.</li>
+  <li>Presentar un menu con las trece operaciones solicitadas y mantenerlo activo hasta seleccionar Salir.</li>
+</ol>
+
+<h2>2. Clases identificadas</h2>
+<table>
+  <tr><th>Clase</th><th>Proposito</th></tr>
+  <tr><td><code>Ubicacion</code></td><td>Representa un lugar investigado, conserva sus datos y valida sus cambios de riesgo y estado.</td></tr>
+  <tr><td><code>Pista</code></td><td>Representa una evidencia encontrada, conserva sus datos y valida importancia y confiabilidad.</td></tr>
+  <tr><td><code>Caso</code></td><td>Representa la investigacion y administra el arreglo fijo de ubicaciones y el ArrayList dinamico de pistas, incluidas las busquedas y estadisticas.</td></tr>
+  <tr><td><code>Main</code></td><td>Es el driver program: solicita entradas, muestra el menu, captura excepciones y coordina las operaciones sobre el caso.</td></tr>
+</table>
+
+<h2>3. Atributos</h2>
+<table>
+  <tr><th>Clase</th><th>Atributo y tipo</th><th>Proposito</th></tr>
+  <tr><td rowspan="5"><code>Ubicacion</code></td><td><code>-codigo: String</code></td><td>Identifica la ubicacion.</td></tr>
+  <tr><td><code>-nombre: String</code></td><td>Nombre del lugar.</td></tr>
+  <tr><td><code>-direccion: String</code></td><td>Direccion o descripcion del lugar.</td></tr>
+  <tr><td><code>-nivelRiesgo: int</code></td><td>Riesgo entre 1 y 10.</td></tr>
+  <tr><td><code>-estado: String</code></td><td>Situacion actual de la ubicacion.</td></tr>
+  <tr><td rowspan="5"><code>Pista</code></td><td><code>-codigo: String</code></td><td>Identificador unico de la pista.</td></tr>
+  <tr><td><code>-descripcion: String</code></td><td>Detalle de la evidencia.</td></tr>
+  <tr><td><code>-tipoEvidencia: String</code></td><td>Clasificacion de la evidencia.</td></tr>
+  <tr><td><code>-nivelImportancia: int</code></td><td>Importancia entre 1 y 10.</td></tr>
+  <tr><td><code>-nivelConfiabilidad: int</code></td><td>Confiabilidad entre 0 y 100.</td></tr>
+  <tr><td rowspan="6"><code>Caso</code></td><td><code>-MAX_UBICACIONES: int = 5</code></td><td>Define la capacidad fija.</td></tr>
+  <tr><td><code>-nombre: String</code></td><td>Nombre de la investigacion.</td></tr>
+  <tr><td><code>-codigo: String</code></td><td>Identificador del caso.</td></tr>
+  <tr><td><code>-detectiveResponsable: String</code></td><td>Responsable de la investigacion.</td></tr>
+  <tr><td><code>-ubicaciones: Ubicacion[5]</code></td><td>Arreglo basico fijo; sus posiciones libres contienen <code>null</code>.</td></tr>
+  <tr><td><code>-pistas: ArrayList&lt;Pista&gt;</code></td><td>Coleccion dinamica de pistas.</td></tr>
+  <tr><td><code>Main</code></td><td><code>-SCANNER: Scanner</code></td><td>Lee las entradas del usuario durante toda la ejecucion.</td></tr>
+</table>
+
+<h2>4. Metodos</h2>
+<table>
+  <tr><th>Clase</th><th>Metodo</th><th>Funcion</th></tr>
+  <tr><td rowspan="5"><code>Ubicacion</code></td><td><code>+Ubicacion(String, String, String, int, String)</code></td><td>Inicializa y valida todos los datos.</td></tr>
+  <tr><td><code>+getNivelRiesgo(): int</code></td><td>Devuelve el riesgo para el reporte.</td></tr>
+  <tr><td><code>+actualizar(int, String): void</code></td><td>Valida y cambia riesgo y estado.</td></tr>
+  <tr><td><code>-validarRiesgo(int): void</code></td><td>Genera excepcion si el riesgo no esta entre 1 y 10.</td></tr>
+  <tr><td><code>+toString(): String</code></td><td>Devuelve la informacion para mostrarla.</td></tr>
+  <tr><td rowspan="6"><code>Pista</code></td><td><code>+Pista(String, String, String, int, int)</code></td><td>Inicializa y valida todos los datos.</td></tr>
+  <tr><td><code>+getCodigo(): String</code></td><td>Permite buscar y detectar duplicados.</td></tr>
+  <tr><td><code>+getNivelImportancia(): int</code></td><td>Proporciona la importancia para los calculos.</td></tr>
+  <tr><td><code>+getNivelConfiabilidad(): int</code></td><td>Proporciona la confiabilidad para los calculos.</td></tr>
+  <tr><td><code>+actualizar(String, String, String, int, int): void</code></td><td>Valida y modifica todos los datos.</td></tr>
+  <tr><td><code>+toString(): String</code></td><td>Devuelve la informacion para mostrarla.</td></tr>
+  <tr><td rowspan="13"><code>Caso</code></td><td><code>+Caso(String, String, String)</code></td><td>Crea un caso con estructuras vacias.</td></tr>
+  <tr><td><code>+registrarUbicacion(int, Ubicacion): void</code></td><td>Valida posicion y disponibilidad antes de guardar.</td></tr>
+  <tr><td><code>+obtenerUbicacion(int): Ubicacion</code></td><td>Obtiene una posicion valida y no nula.</td></tr>
+  <tr><td><code>+modificarUbicacion(int, int, String): void</code></td><td>Actualiza una ubicacion existente.</td></tr>
+  <tr><td><code>+descartarUbicacion(int): void</code></td><td>Deja la posicion en <code>null</code>.</td></tr>
+  <tr><td><code>+mostrarUbicaciones(): void</code></td><td>Recorre el arreglo y omite posiciones nulas.</td></tr>
+  <tr><td><code>+registrarPista(Pista): void</code></td><td>Rechaza duplicados y agrega al ArrayList.</td></tr>
+  <tr><td><code>+buscarPista(String): Pista</code></td><td>Recorre el ArrayList y devuelve la coincidencia o <code>null</code>.</td></tr>
+  <tr><td><code>+modificarPista(...): void</code></td><td>Localiza y actualiza una pista.</td></tr>
+  <tr><td><code>+eliminarPista(String): void</code></td><td>Localiza y elimina una pista.</td></tr>
+  <tr><td><code>+cantidadUbicaciones(), espaciosDisponibles()</code></td><td>Calculan ocupacion del arreglo.</td></tr>
+  <tr><td><code>+ubicacionMayorRiesgo(), pistaMayorImportancia(), pistaMayorConfiabilidad()</code></td><td>Recorren las estructuras para obtener los maximos.</td></tr>
+  <tr><td><code>+cantidadPistas(), promedioImportancia()</code></td><td>Calculan cantidad y promedio de pistas.</td></tr>
+  <tr><td><code>Main</code></td><td><code>+main(String[]): void</code> y metodos privados de solicitud, menu y reporte</td><td>Controlan el ciclo del menu, entradas, salidas y manejo de excepciones.</td></tr>
+</table>
+
+<h2>5. Respuestas al analisis</h2>
+<ol>
+  <li><strong>Propiedades y metodos:</strong> se detallan en las secciones 3 y 4. Las entidades conservan y validan sus datos; <code>Caso</code> administra ambas colecciones; <code>Main</code> controla la interfaz.</li>
+  <li><strong>Tipos:</strong> los textos son <code>String</code>, niveles y posiciones son <code>int</code>, el promedio es <code>double</code>, las operaciones sin resultado son <code>void</code> y las busquedas devuelven el objeto correspondiente.</li>
+  <li><strong>Arreglo basico:</strong> <code>ubicaciones</code> es <code>Ubicacion[]</code> de tamaño 5 porque el limite se conoce desde el inicio.</li>
+  <li><strong>ArrayList:</strong> <code>pistas</code> es directamente <code>ArrayList&lt;Pista&gt;</code> porque la cantidad de evidencias es desconocida.</li>
+  <li><strong>Visibilidad:</strong> los atributos son privados para conservar el encapsulamiento. Las operaciones usadas desde otras clases son publicas y las validaciones y ayudas internas son privadas.</li>
+  <li><strong>Parametros:</strong> los constructores reciben los datos iniciales; registrar recibe posicion y objeto; buscar o eliminar recibe codigo; modificar recibe el identificador actual y todos los nuevos valores.</li>
+  <li><strong>Inicializacion y validacion:</strong> los constructores asignan los datos, crean el arreglo y el ArrayList. Antes de cambiar estado se validan textos no vacios, riesgo e importancia de 1 a 10 y confiabilidad de 0 a 100.</li>
+  <li><strong>Posiciones nulas:</strong> se compara <code>ubicaciones[i] != null</code> antes de invocar metodos. Una consulta sobre <code>null</code> genera una excepcion controlada con un mensaje.</li>
+  <li><strong>Operaciones en ArrayList:</strong> la busqueda recorre con un ciclo <code>for-each</code> y compara codigos sin distinguir mayusculas. Modificar usa el objeto encontrado y eliminar usa <code>remove</code>.</li>
+  <li><strong>Excepciones:</strong> <code>InputMismatchException</code> aparece si <code>Scanner</code> recibe texto donde se espera un entero; <code>IllegalArgumentException</code> aparece por rangos, textos, posiciones u operaciones invalidas. <code>Main</code> las captura para conservar el menu. El <code>finally</code> de la lectura numerica limpia siempre el resto de la linea.</li>
+</ol>
+
+<h2>6. Manejo de excepciones</h2>
+<table>
+  <tr><th>Situacion</th><th>Excepcion / control</th><th>Respuesta</th></tr>
+  <tr><td>Texto en una entrada numerica</td><td><code>InputMismatchException</code></td><td>Se informa el error; <code>finally</code> limpia la linea y el menu continua.</td></tr>
+  <tr><td>Riesgo, importancia o confiabilidad fuera de rango</td><td><code>IllegalArgumentException</code></td><td>Se muestra el mensaje y no se almacena el objeto invalido.</td></tr>
+  <tr><td>Posicion fuera de 0 a 4, ocupada o vacia</td><td><code>IllegalArgumentException</code></td><td>Se evita acceder o modificar incorrectamente el arreglo.</td></tr>
+  <tr><td>Codigo repetido o pista inexistente</td><td><code>IllegalArgumentException</code></td><td>Se evita duplicar, modificar o eliminar un elemento inexistente.</td></tr>
+  <tr><td>Colecciones vacias</td><td>Validacion previa</td><td>Se muestran mensajes apropiados y se evitan calculos sin elementos.</td></tr>
+</table>
+
+<section class="uml-page">
+<h2>7. Diagrama de clases UML</h2>
+<svg viewBox="0 0 940 720" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:Arial,sans-serif">
+  <defs><marker id="diamond" markerWidth="14" markerHeight="10" refX="2" refY="5" orient="auto"><path d="M0,5 L6,1 L12,5 L6,9 Z" fill="white" stroke="#243746"/></marker></defs>
+  <g fill="white" stroke="#243746" stroke-width="2">
+    <rect x="20" y="30" width="390" height="270"/>
+    <line x1="20" y1="65" x2="410" y2="65"/><line x1="20" y1="145" x2="410" y2="145"/>
+    <rect x="530" y="30" width="390" height="270"/>
+    <line x1="530" y1="65" x2="920" y2="65"/><line x1="530" y1="145" x2="920" y2="145"/>
+    <rect x="20" y="400" width="460" height="295"/>
+    <line x1="20" y1="435" x2="480" y2="435"/><line x1="20" y1="545" x2="480" y2="545"/>
+    <rect x="570" y="420" width="350" height="180"/>
+    <line x1="570" y1="455" x2="920" y2="455"/><line x1="570" y1="490" x2="920" y2="490"/>
+  </g>
+  <g font-size="14" fill="#17232d">
+    <text x="215" y="54" text-anchor="middle" font-weight="bold" font-size="18">Ubicacion</text>
+    <text x="32" y="86">- codigo: String</text><text x="32" y="106">- nombre: String</text><text x="32" y="126">- direccion: String</text>
+    <text x="220" y="86">- nivelRiesgo: int</text><text x="220" y="106">- estado: String</text>
+    <text x="32" y="168">+ Ubicacion(codigo, nombre, direccion, riesgo, estado)</text><text x="32" y="190">+ getNivelRiesgo(): int</text>
+    <text x="32" y="212">+ actualizar(riesgo: int, estado: String): void</text><text x="32" y="234">- validarRiesgo(riesgo: int): void</text>
+    <text x="32" y="256">- validarTexto(valor: String, campo: String): void</text><text x="32" y="278">+ toString(): String</text>
+
+    <text x="725" y="54" text-anchor="middle" font-weight="bold" font-size="18">Pista</text>
+    <text x="542" y="86">- codigo: String</text><text x="542" y="106">- descripcion: String</text><text x="542" y="126">- tipoEvidencia: String</text>
+    <text x="730" y="86">- nivelImportancia: int</text><text x="730" y="106">- nivelConfiabilidad: int</text>
+    <text x="542" y="168">+ Pista(codigo, descripcion, tipo, importancia, confiabilidad)</text><text x="542" y="190">+ getCodigo(): String</text>
+    <text x="542" y="212">+ getNivelImportancia(): int</text><text x="542" y="234">+ getNivelConfiabilidad(): int</text>
+    <text x="542" y="256">+ actualizar(codigo, descripcion, tipo, importancia, confiabilidad): void</text><text x="542" y="278">+ toString(): String</text>
+
+    <text x="250" y="424" text-anchor="middle" font-weight="bold" font-size="18">Caso</text>
+    <text x="32" y="457">- MAX_UBICACIONES: int = 5</text><text x="32" y="479">- nombre: String</text><text x="32" y="501">- codigo: String</text><text x="32" y="523">- detectiveResponsable: String</text>
+    <text x="250" y="479">- ubicaciones: Ubicacion[5]</text><text x="250" y="501">- pistas: ArrayList&lt;Pista&gt;</text>
+    <text x="32" y="568">+ registrar / obtener / modificar / descartarUbicacion(...)</text><text x="32" y="590">+ mostrarUbicaciones(): void</text>
+    <text x="32" y="612">+ registrar / buscar / obtener / modificar / eliminarPista(...)</text><text x="32" y="634">+ mostrarPistas(): void</text>
+    <text x="32" y="656">+ cantidadUbicaciones(), espaciosDisponibles(), cantidadPistas(): int</text><text x="32" y="678">+ metodos de maximos y promedio; + getResumen(): String</text>
+
+    <text x="745" y="444" text-anchor="middle" font-weight="bold" font-size="18">Main</text>
+    <text x="582" y="478">- SCANNER: Scanner</text>
+    <text x="582" y="515">+ main(args: String[]): void</text><text x="582" y="537">- solicitarCaso(): Caso</text><text x="582" y="559">- operaciones del menu(...): void</text><text x="582" y="581">- leerEntero / leerTexto / mostrarMenu(...)</text>
+  </g>
+  <g stroke="#243746" stroke-width="2" fill="none">
+    <path d="M170 400 L170 340 L170 300" marker-start="url(#diamond)"/><path d="M330 400 L330 340 L725 340 L725 300" marker-start="url(#diamond)"/>
+    <path d="M570 510 L520 510 L520 610 L480 610" marker-end="url(#diamond)"/>
+  </g>
+  <g font-size="13" fill="#17232d"><text x="178" y="326">5 ubicaciones</text><text x="530" y="330">0..* pistas</text><text x="490" y="600">usa</text></g>
+</svg>
+<p class="note"><strong>Anotacion:</strong> <code>Caso</code> compone exactamente cinco espacios de <code>Ubicacion</code> y una cantidad variable de objetos <code>Pista</code>. <code>Main</code> depende de <code>Caso</code> para ejecutar las operaciones del menu.</p>
+</section>
+</body>
+</html>
